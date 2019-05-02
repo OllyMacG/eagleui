@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+}
+
+group 'com.oliver.eagleui'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+configurations {
+    cucumberRuntime.extendsFrom testRuntime
+}
+
+dependencies {
+    compile 'org.seleniumhq.selenium:selenium-server:3.14.0'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.14.0'
+    compile 'org.testng:testng:6.1.1'
+    compile group: 'info.cukes', name: 'cucumber-testng', version: '1.2.5'
+    compile group: 'info.cukes', name: 'cucumber-java', version: '1.2.5'
+    compile 'org.projectlombok:lombok:1.18.6'
+    compile 'org.hamcrest:hamcrest:2.1'
+}
+
+task runAllTest() {
+    dependsOn assemble, compileTestJava
+    doLast {
+        String tags = getTags()
+        javaexec {
+            main = "cucumber.api.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty', '--glue', 'stepDef', 'src/test/java', '-t', tags,
+                    "${project.projectDir}/src/test/resources/features"]
+            systemProperties = System.getProperties()
+        }
+    }
+}
+
+private String getTags() {
+    def tags = System.getProperty("tag")
+    System.out.println("Tags that will be used for current run:" + tags)
+    if (tags != null)
+        return tags
+    return "~wip"
+}
