@@ -19,6 +19,7 @@ Feature: Create Entity screen tests
 
     Examples:
       | entity_type      | entity_name        | blackbox_name |
+      | Server           | Entity Name        | Blackbox Name |
       | Business Process | Business ^& Entity | 99999999      |
       | Application      | 1                  | Blackbox\n    |
       | Hardware         |                    | Blackbox@     |
